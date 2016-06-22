@@ -54,19 +54,18 @@ function socketConnect () {
       }
     } else if (obj.op === 'utx') {
       WalletStore.sendEvent('on_tx_received');
+      // MyWallet.wallet.addTransaction(obj.x);
       var sendOnTx = WalletStore.sendEvent.bind(null, 'on_tx');
       MyWallet.wallet.getHistory().then(sendOnTx);
     } else if (obj.op === 'block') {
 
-      console.log('on-block');
       MyWallet.wallet.latestBlock = obj.x;
-      var up = function(t){t.updateConfirmationsOnBlock();}
+      var up = function (t){
+        t.updateConfirmationsOnBlock();
+      };
       MyWallet.wallet.txList._transactions.forEach(up);
+      WalletStore.sendEvent('on_block');
 
-
-      var sendOnBlock = WalletStore.sendEvent.bind(null, 'on_block');
-      // MyWallet.wallet.getHistory().then(sendOnBlock);
-      // MyWallet.wallet.latestBlock = obj.x;
     } else if (obj.op === 'pong') {
       clearTimeout(MyWallet.ws.pingTimeoutPID);
     }
